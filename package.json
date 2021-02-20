@@ -12,26 +12,26 @@
     "lint": "npm run lint:js && npm run lint:style"
   },
   "dependencies": {
-    "@nuxtjs/composition-api": "^0.19.0",
+    "@nuxtjs/composition-api": "^0.20.2",
     "@nuxtjs/pwa": "^3.3.5",
-    "core-js": "^3.8.3",
-    "nuxt": "^2.14.12"
+    "core-js": "^3.9.0",
+    "nuxt": "^2.15.1"
   },
   "devDependencies": {
-    "@nuxt/types": "^2.14.12",
+    "@nuxt/types": "^2.15.1",
     "@nuxt/typescript-build": "^2.0.4",
     "@nuxtjs/eslint-config-typescript": "^5.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/stylelint-module": "^4.0.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.3",
-    "eslint": "^7.18.0",
+    "eslint": "^7.20.0",
     "eslint-plugin-nuxt": "^2.0.0",
-    "eslint-plugin-vue": "^7.5.0",
+    "eslint-plugin-vue": "^7.6.0",
     "pug": "^3.0.0",
     "pug-plain-loader": "^1.1.0",
     "style-loader": "^2.0.0",
-    "stylelint": "^13.9.0",
+    "stylelint": "^13.10.0",
     "stylelint-config-standard": "^20.0.0",
     "stylelint-order": "^4.1.0",
     "stylelint-plugin-stylus": "^0.10.0",
