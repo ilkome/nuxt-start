@@ -1,0 +1,35 @@
+{
+	"folders": [
+    {
+      "name": "nuxt-start",
+      "path": "."
+    },
+    {
+      "name": "pages",
+      "path": "pages"
+    },
+    {
+      "name": "components",
+      "path": "components"
+    },
+    {
+      "name": "store",
+      "path": "store"
+    },
+    {
+      "name": "layouts",
+      "path": "layouts"
+    },
+    {
+      "name": "assets",
+      "path": "assets"
+    }
+  ],
+  "settings": {
+    "stylelint.customSyntax": "stylelint-plugin-stylus/custom-syntax",
+    "stylelint.validate": [
+      "vue",
+      "stylus"
+    ]
+  }
+}
