@@ -11,7 +11,8 @@
     "@nuxtjs/composition-api": "^0.20.2",
     "@nuxtjs/pwa": "^3.3.5",
     "core-js": "^3.9.0",
-    "nuxt": "^2.15.1"
+    "nuxt": "^2.15.1",
+    "portal-vue": "^2.1.7"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.1",
