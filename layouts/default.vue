@@ -8,6 +8,7 @@ export default {
 Nuxt
 </template>
 
-<style lang="stylus" scoped>
-//
+<style lang="stylus">
+@import "~assets/stylus/reset"
+@import "~assets/stylus/fonts"
 </style>

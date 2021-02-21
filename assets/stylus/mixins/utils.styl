@@ -1,0 +1,39 @@
+overflowScrollY()
+  overflow hidden
+  overflow-y auto
+  -webkit-overflow-scrolling touch // fix iOS scroll in blocks
+
+// width - height
+// @TODO: refactor
+rectangle(w, h = false)
+  width w
+  if h
+    height h
+  else
+    height w
+
+
+// Placeholder
+placeholder()
+  &.placeholder
+    {block}
+  &:placeholder
+    {block}
+  &:-moz-placeholder
+    {block}
+  &::-moz-placeholder
+    {block}
+  &:-ms-input-placeholder
+    {block}
+  &::-webkit-input-placeholder
+    {block}
+
+// line Clamp
+lineClampDisplay(num)
+  overflow hidden
+  display -webkit-box
+  -webkit-box-orient vertical
+  -webkit-line-clamp num
+
+lineClampNumber(num)
+  -webkit-line-clamp num

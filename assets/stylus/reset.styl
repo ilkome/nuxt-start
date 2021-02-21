@@ -1,0 +1,38 @@
+@import "./variables/*"
+@import "./mixins/*"
+
+*
+  box-sizing border-box
+  -webkit-tap-highlight-color transparent
+  margin 0
+  border 0
+  font-primary()
+
+  &:focus
+    outline 0
+
+strong
+  font-weight 700
+
+html
+body
+#__nuxt
+#__layout
+  height 100%
+
+body
+  overflow hidden
+  typoText()
+  background $colorFaint3
+  overscroll-behavior-y contain // disable pull to refresh
+
+  &._scroll
+    overflow auto
+
+button
+a
+  color $colorAccent1
+  link()
+
+img
+  vertical-align middle

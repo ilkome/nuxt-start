@@ -1,0 +1,15 @@
+$transition-time = 350ms
+$transition-style = cubic-bezier(.17, .04, .03, 1)
+
+anim($time = $transition-time, $style = $transition-style)
+  transition $time $style
+
+anim-none()
+  transition none
+
+button-anim()
+  transition  color .15s ease-in-out,
+              background .15s ease-in-out,
+              border-color .15s ease-in-out,
+              opacity .15s ease-in-out,
+              box-shadow .15s ease-in-out

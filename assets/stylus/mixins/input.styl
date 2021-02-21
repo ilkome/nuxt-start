@@ -1,0 +1,17 @@
+baseInputStyles()
+  appearance none
+  width 100%
+  padding $baseDivideOneHalf $base
+  typoBase()
+  border-radius $border-curve
+  color $colorBase2
+  background $colorFaint4
+  border 1px solid $colorFaint1
+  transition  color .15s ease-in-out,
+              background .15s ease-in-out,
+              border-color .15s ease-in-out,
+              box-shadow .15s ease-in-out
+
+  &:focus
+    background $colorFaint5
+    border-color $colorAccent1

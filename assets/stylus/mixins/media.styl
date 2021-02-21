@@ -1,0 +1,41 @@
+$ipad = 440px
+$w360 = 360px
+$w400 = 400px
+$w440 = 440px
+
+//
+// custom width
+//
+media($width, $less = false)
+  if $less
+    @media (max-width: $width)
+      {block}
+  else
+    @media (min-width: $width)
+      {block}
+
+//
+// ipad
+//
+media-ipad($less = false)
+  if $less == "less"
+    @media (max-width: $ipad)
+      {block}
+  else
+    @media (min-width: $ipad)
+      {block}
+
+//
+// hover
+//
+media-hover(active = true, hoverOnTouchDevice = false)
+  .isNotTouchDevice &:hover
+    {block}
+
+  if active
+    &:active
+      {block}
+
+  if hoverOnTouchDevice
+    &:hover
+      {block}
