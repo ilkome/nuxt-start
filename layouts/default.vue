@@ -5,7 +5,10 @@ export default {
 </script>
 
 <template lang="pug">
-Nuxt
+.layout
+  Nuxt
+
+  PortalTarget(name="base" multiple)
 </template>
 
 <style lang="stylus">
