@@ -5,10 +5,8 @@ module.exports = {
     node: true
   },
   extends: [
-    '@nuxtjs/eslint-config-typescript',
-    'plugin:nuxt/recommended'
-  ],
-  plugins: [
+    'plugin:nuxt/recommended',
+    '@nuxtjs/eslint-config-typescript'
   ],
   rules: {
     'no-console': 'off',
@@ -18,6 +16,7 @@ module.exports = {
       'stroustrup', {
         allowSingleLine: true
       }
-    ]
+    ],
+    curly: ['error', 'multi-line']
   }
 }
