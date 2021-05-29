@@ -36,9 +36,9 @@ export default {
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
     // https://composition-api.nuxtjs.org
-    '@nuxtjs/composition-api',
+    '@nuxtjs/composition-api/module',
     // https://vite.nuxtjs.org/
-    // 'nuxt-vite'
+    'nuxt-vite'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
