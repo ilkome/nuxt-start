@@ -12,6 +12,6 @@ export default {
 </template>
 
 <style lang="stylus">
-// @import "~assets/stylus/reset"
-// @import "~assets/stylus/fonts"
+@import "../assets/stylus/reset"
+@import "../assets/stylus/fonts"
 </style>
