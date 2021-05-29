@@ -67,7 +67,7 @@ export default {
 </template>
 
 <style lang="stylus" scoped>
-@import "~assets/stylus/base"
+// @import "~assets/stylus/base"
 
 .baseModalOveflowAnim
   &-enter-active
