@@ -14,19 +14,19 @@ export default {
 
   setup (props, { listeners }) {
     const { isShow } = toRefs(props)
-    const { initTouchModal, closeModal } = useTouchClose()
+    const { init, close } = useTouchClose()
 
     const wrappers = reactive({
       container: ref(null),
       content: ref(null),
       handler: ref(null),
-      overflow: ref(null),
+      overlay: ref(null),
       wrap: ref(null)
     })
 
     watch(isShow, (value) => {
       value && setTimeout(() => {
-        initTouchModal({
+        init({
           ...toRefs(wrappers),
           onClose: listeners.onClose
         })
@@ -35,7 +35,7 @@ export default {
 
     return {
       ...toRefs(wrappers),
-      closeModal
+      close
     }
   }
 }
@@ -46,56 +46,26 @@ export default {
   v-show="isShow"
   ref="container"
 )
-  transition(name="baseModalOveflowAnim" appear)
-    .baseModal__overflow(
-      ref="overflow"
-      v-show="isShow"
-      @click="closeModal"
-    )
+  .baseModal__overlay(
+    ref="overlay"
+    v-show="isShow"
+    @click="close"
+  )
 
-  transition(name="baseModalWrapAnim" appear)
-    .baseModal__wrap(
-      v-show="isShow"
-      ref="wrap"
-    )
-      .baseModal__handler(@click="closeModal" ref="handler")
-      .baseModal__closure(@click="closeModal"): .i.i_close
+  .baseModal__wrap(
+    v-show="isShow"
+    ref="wrap"
+  )
+    .baseModal__handler(@click="close" ref="handler")
+    .baseModal__closure(@click="close"): .i.i_close
 
-      .baseModal__inside(ref="content")
-        .baseModal__content
-          slot(name="content")
+    .baseModal__inside(ref="content")
+      .baseModal__content
+        slot(name="content")
 </template>
 
 <style lang="stylus" scoped>
-// @import "~assets/stylus/base"
-
-.baseModalOveflowAnim
-  &-enter-active
-  &-leave-active
-    transition all 250ms $transition-style
-
-  &-enter
-  &-leave-to
-    opacity 0
-
-.baseModalWrapAnim
-  &-enter-active
-  &-leave-active
-    opacity 0
-    transform translate3d(0, 50px, 0)
-    transition opacity 300ms $transition-style, transform 250ms $transition-style
-
-  &-enter-to
-    transform translate3d(0, 0, 0)
-
-  &-leave
-  &-enter-to
-  &-leave-to
-    opacity 1
-
-  &-leave-to
-    transform translate3d(0, 100%, 0)
-    transition opacity 400ms $transition-style, transform 400ms $transition-style
+@import "../assets/stylus/base"
 
 $base = 16px
 $colorOpacity1 = red
@@ -103,6 +73,7 @@ $colorBase4 = blue
 $colorBaseWhite = yellow
 
 .baseModal
+  overflow hidden
   z-index 110
   position absolute
   top 0
@@ -110,19 +81,20 @@ $colorBaseWhite = yellow
   width 100%
   height 100%
 
-  &__overflow
+  &__overlay
     z-index 1
     cursor s-resize
+    opacity 0
     position absolute
     left 0
     bottom 0
     width 100%
     height 100%
     background $colorOpacity1
-    anim(500ms)
 
   &__wrap
     z-index 2
+    opacity 0
     position absolute
     left 0
     bottom 0
@@ -132,9 +104,6 @@ $colorBaseWhite = yellow
     max-height 96%
     padding-top 0
     border-radius $base $base 0 0
-
-    &._anim
-      anim(200ms)
 
   &__handler
     z-index 3
@@ -146,6 +115,7 @@ $colorBaseWhite = yellow
     justify-content center
     width 100%
     height 16px
+    user-select none
 
     &:after
       content ""
@@ -170,10 +140,6 @@ $colorBaseWhite = yellow
     background #bebebe
     border-radius 50%
 
-    .i
-      color $colorBaseWhite
-      font-size 10px
-
   &__inside
     overflow hidden
     overflowScrollY()
@@ -184,20 +150,10 @@ $colorBaseWhite = yellow
     padding-bottom $base
     background $colorBaseWhite
     border-radius $base $base 0 0
+    user-select none
 
   &__content
     display flex
     flex-flow column
     flex-grow 1
-
-  &__title
-    display flex
-    align-items center
-    justify-content center
-    min-height 30px
-    padding 0 $base
-    padding-bottom $base
-    typoTitle()
-    font-size 16px
-    text-align center
 </style>

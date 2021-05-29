@@ -1,20 +1,20 @@
-import { onUnmounted } from '@nuxtjs/composition-api'
+import gsap from 'gsap'
 
 export default function useOnTouch () {
-  let isDragging = true
-  let isDrugByHandler = false
+  let containerHeight = 0
+  let isDragging = false
+  let isDragByHandler = false
   let initialY = 0
   let currentY = 0
 
   let config = {
     dragOffset: 16,
     whaitForScrollClassName: 'waitForScroll',
-    doNotTouchClassName: 'doNotCloseModal',
-    animClassName: '_anim'
+    doNotTouchClassName: 'doNotclose'
   }
 
   let container: (null | any) = null
-  let overflow: (null | any) = null
+  let overlay: (null | any) = null
   let wrap: (null | any) = null
   let content: (null | any) = null
   let onClose: (null | any) = null
@@ -22,12 +22,89 @@ export default function useOnTouch () {
   let isInit: Boolean = false
 
   /**
+   * Get Opacity
+   */
+  function getOpacity (): number {
+    const diff = (containerHeight - currentY) / (containerHeight / 100)
+    const diffTrunc = Math.trunc(diff)
+    const opacity = diffTrunc === 100 ? 1 : diffTrunc >= 10 ? `0.${diffTrunc}` : `0.0${diffTrunc}`
+    return Number(opacity)
+  }
+
+  /**
+     * Modal Animation
+     */
+  async function openAnimation () {
+    const tl = gsap.timeline()
+    tl.to(overlay.value, {
+      opacity: 1,
+      duration: 0.2
+    })
+
+    tl.fromTo(wrap.value, {
+      transform: 'translateY(10px)',
+      opacity: 0
+    }, {
+      opacity: 1,
+      transform: 'translateY(0)',
+      duration: 0.1,
+      ease: 'power1.inOut'
+    }, '-=0.15')
+
+    return await tl
+  }
+
+  /**
+   * Moving Animation
+   */
+  function movingAnimation () {
+    gsap.to(wrap.value, {
+      transform: `translateY(${currentY}px)`,
+      duration: 0
+    })
+    gsap.to(overlay.value, {
+      opacity: getOpacity(),
+      duration: 0
+    })
+  }
+
+  /**
+   * Closing Animation
+   */
+  async function closingAnimation () {
+    await gsap.to(wrap.value, {
+      opacity: 0,
+      scale: 0.99,
+      transform: `translateY(${currentY + 100}px)`,
+      duration: 0.15
+    })
+    return await gsap.to(overlay.value, {
+      opacity: 0,
+      duration: 0.2
+    })
+  }
+
+  /**
+   * Opening Animation
+   */
+  function openingAnimation () {
+    gsap.to(wrap.value, {
+      transform: 'translateY(0)',
+      duration: 0.2
+    })
+    gsap.to(overlay.value, {
+      opacity: 1,
+      duration: 0.2
+    })
+  }
+
+  /**
    * Init
    * @param props
    */
-  function initTouchModal (props: any): void {
+  async function init (props: any) {
     container = props.container
-    overflow = props.overflow
+    overlay = props.overlay
     wrap = props.wrap
     content = props.content
     onClose = props.onClose
@@ -42,32 +119,19 @@ export default function useOnTouch () {
 
     if (!isInit) {
       isInit = true
+      containerHeight = wrap.value.clientHeight
+      await openAnimation()
+
+      // touch events
       container.value.addEventListener('touchstart', onDragStart)
       container.value.addEventListener('touchmove', onDragging)
       container.value.addEventListener('touchend', onDragEnd)
+
+      // mouse events
+      container.value.addEventListener('mousedown', onDragStart)
+      container.value.addEventListener('mousemove', onDragging)
       container.value.addEventListener('mouseup', onDragEnd)
-    }
-  }
-
-  /**
-   * Translate
-   */
-  function setTranslate (): void {
-    if (!wrap.value) { return }
-    const offset = isDrugByHandler ? 0 : config.dragOffset
-
-    if (currentY === 0) {
-      wrap.value.style.transform = ''
-      overflow.value.style.opacity = ''
-    }
-    else if (currentY > offset) {
-      const containerHeight = container.value.clientHeight
-      const diff = (containerHeight - currentY) / (containerHeight / 100)
-      const diffTrunc = Math.trunc(diff)
-      const opacity = diffTrunc === 100 ? 1 : diffTrunc >= 10 ? `0.${diffTrunc}` : `0.0${diffTrunc}`
-
-      wrap.value.style.transform = `translate3d(0, ${currentY - offset}px, 0)`
-      overflow.value.style.opacity = opacity
+      container.value.addEventListener('mouseleave', onDragEnd)
     }
   }
 
@@ -77,12 +141,11 @@ export default function useOnTouch () {
    */
   function onDragStart (event: any): void {
     isDragging = false
-    wrap.value.classList.remove(config.animClassName)
 
-    // Always use touch with handler
-    isDrugByHandler = handler.value && event.target.classList.contains(handler.value.className)
-    if (isDrugByHandler) {
-      isDrugByHandler = true
+    // Always use pan with handler
+    isDragByHandler = handler.value && event.target.classList.contains(handler.value.className)
+    if (isDragByHandler) {
+      isDragByHandler = true
       isDragging = true
     }
     // Check if should drag modal
@@ -106,82 +169,92 @@ export default function useOnTouch () {
     }
 
     // Drag inside wrap
-    if (event.target.closest(`.${wrap.value.className}`)) { isDragging = true }
+    if (event.target.closest(`.${wrap.value.className}`)) {
+      isDragging = true
+    }
 
     if (isDragging) {
-      event.type === 'touchstart'
-        ? initialY = event.touches[0].clientY
-        : initialY = event.clientY
+      initialY = getDelta(event)
     }
+  }
+
+  function getDelta (event: any): number {
+    return event.type.includes('touch')
+      ? event.touches[0].clientY - initialY
+      : event.clientY - initialY
   }
 
   /**
    * Dragging handler
    * @param event
    */
-  function onDragging (event: any): void {
-    if (isDragging) {
-      event.type === 'touchmove'
-        ? currentY = event.touches[0].clientY - initialY
-        : currentY = event.clientY - initialY
+  async function onDragging (event: any, isFinal?: Boolean): Promise<void> {
+    if (isDragging && !isFinal) {
+      currentY = getDelta(event)
+      const offset = isDragByHandler ? 0 : config.dragOffset
+      if (currentY > offset) movingAnimation()
+    }
 
-      setTranslate()
+    if (isFinal) {
+      console.log('isFinal')
+
+      if (currentY >= 80) {
+        await closingAnimation()
+        removeEvents()
+        isInit = false
+        if (onClose) { onClose() }
+      }
+      else {
+        openingAnimation()
+      }
+
+      resetState()
     }
   }
 
   /**
    * Drag end handler
    */
-  function onDragEnd (): void {
-    if (currentY >= 80) {
-      closeModal()
-    }
-    else {
-      currentY = 0
-      setTranslate()
-      if (isDragging) { wrap.value.classList.add(config.animClassName) }
-    }
+  function onDragEnd (event: any) {
+    onDragging(event, true)
   }
 
-  /**
-   * Transition end handler
-   */
-  function onTransitionEnd (): void {
-    wrap.value.removeEventListener('transitionend', onTransitionEnd)
+  function resetState () {
     currentY = 0
-    wrap.value.style.transform = ''
-    overflow.value.style.opacity = ''
-    if (onClose) { onClose() }
-  }
-
-  /**
-   * Clode modal
-   */
-  function closeModal (): void {
+    initialY = 0
     isDragging = false
-    isDrugByHandler = false
-
-    currentY = container.value.clientHeight
-    wrap.value.classList.add(config.animClassName)
-    overflow.value.style.opacity = 0
-    setTranslate()
-
-    wrap.value.addEventListener('transitionend', onTransitionEnd)
+    isDragByHandler = false
   }
 
   /**
-   * onUnmounted
+   * Remove Events
    */
-  onUnmounted(() => {
-    if (!container || !container.value) { return }
+  function removeEvents () {
+    // touch events
     container.value.removeEventListener('touchstart', onDragStart)
     container.value.removeEventListener('touchmove', onDragging)
     container.value.removeEventListener('touchend', onDragEnd)
+
+    // mouse events
+    container.value.removeEventListener('mousedown', onDragStart)
+    container.value.removeEventListener('mousemove', onDragging)
     container.value.removeEventListener('mouseup', onDragEnd)
-  })
+    container.value.removeEventListener('mouseleave', onDragEnd)
+  }
+
+  /**
+   * Close Modal
+   */
+  async function close () {
+    await closingAnimation()
+    removeEvents()
+    resetState()
+    isInit = false
+    if (onClose) onClose()
+  }
 
   return {
-    initTouchModal,
-    closeModal
+    init,
+    close
   }
 }
