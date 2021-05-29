@@ -12,8 +12,8 @@
     "@nuxtjs/pwa": "^3.3.5",
     "gsap": "^3.6.1",
     "nuxt": "^2.15.6",
-    "portal-vue": "^2.1.7",
-    "swiper": "^6.6.2"
+    "swiper": "^6.6.2",
+    "vue-advanced-cropper": "^1.6.0"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.6",
